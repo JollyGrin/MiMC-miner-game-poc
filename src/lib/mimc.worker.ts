@@ -17,31 +17,34 @@ function safeConvertToBigInt(input: string | number | bigint): bigint {
 
 // Listen for messages from the main thread
 self.addEventListener('message', (event) => {
-	const { type, input, key } = event.data;
+	const { threshold, maxIterations } = event.data;
 
-	try {
-		let result;
-		console.log({ input, key });
-		let safeInput = safeConvertToBigInt(input);
-		let safeKey = safeConvertToBigInt(key);
-		switch (type) {
-			case 'hash':
-				result = mimc.hash(safeInput);
-				break;
-			case 'hashWithKey':
-				result = mimc.hashWithKey(safeInput, key ? safeKey : BigInt(0));
-				break;
-			default:
-				throw new Error('Invalid operation type');
+	let nonce = 0;
+	let result = '';
+
+	while (nonce < maxIterations) {
+		result = mimc.hash(BigInt(nonce));
+
+		// Convert hex result to BigInt and compare with threshold
+		const hashValue = BigInt(result);
+
+		if (hashValue < BigInt(threshold)) {
+			self.postMessage({
+				success: true,
+				nonce,
+				result
+			});
+			return;
 		}
 
-		// Send the result back to the main thread
-		self.postMessage({ success: true, result });
-	} catch (error) {
-		// Send any errors back to the main thread
-		self.postMessage({
-			success: false,
-			error: error instanceof Error ? error.message : 'Unknown error'
-		});
+		console.log('mined nonce', nonce, 'with result', result);
+
+		nonce++;
 	}
+
+	// If no solution found
+	self.postMessage({
+		success: false,
+		error: 'No solution found within max iterations'
+	});
 });

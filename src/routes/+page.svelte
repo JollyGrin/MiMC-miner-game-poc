@@ -2,59 +2,45 @@
 	import { onMount } from 'svelte';
 
 	let worker: Worker | null = null;
-	let inputValue = 0x2b;
-	let keyValue = 0x2b;
-	let hashResult = '';
+	let threshold = '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'; // Adjustable
+	let maxIterations = 10000000;
+	let miningResult: { nonce?: number; result?: string } = {};
+	let isMining = false;
 	let errorMessage = '';
-	let isLoading = false;
 
 	onMount(() => {
-		// Create the worker
 		worker = new Worker(new URL('$lib/mimc.worker.ts', import.meta.url), {
 			type: 'module'
 		});
 
-		// Listen for messages from the worker
 		worker.addEventListener('message', (event) => {
-			isLoading = false;
+			isMining = false;
 			if (event.data.success) {
-				hashResult = event.data.result;
+				miningResult = {
+					nonce: event.data.nonce,
+					result: event.data.result
+				};
 				errorMessage = '';
 			} else {
 				errorMessage = event.data.error;
-				hashResult = '';
+				miningResult = {};
 			}
 		});
 
-		// Cleanup worker when component is destroyed
-		return () => {
-			worker?.terminate();
-		};
+		return () => worker?.terminate();
 	});
 
-	function handleHash() {
-		if (!worker) {
-			console.log('NO WORKER!');
-			return;
-		}
+	function startMining() {
+		if (!worker) return;
 
-		isLoading = true;
-		hashResult = '';
+		isMining = true;
+		miningResult = {};
 		errorMessage = '';
 
-		// Determine which method to use based on key input
-		const messageType = keyValue ? 'hashWithKey' : 'hash';
-		const messageData =
-			messageType === 'hash'
-				? { type: 'hash', input: inputValue }
-				: { type: 'hashWithKey', input: inputValue, key: keyValue };
-
-		console.table({
-			messageType,
-			messageData
+		worker.postMessage({
+			threshold,
+			maxIterations
 		});
-
-		worker.postMessage(messageData);
 	}
 </script>
 
@@ -84,23 +70,24 @@
 			</div>
 		</div>
 		<div class="flex flex-col items-center gap-4">
-			{#if isLoading}
-				<pre>Loading!</pre>
-			{/if}
-
 			<button
-				on:click={handleHash}
+				on:click={startMining}
 				class="w-fit min-w-[12rem] self-start rounded bg-orange-200 p-3"
 			>
 				{'> Start Scraping'}
 			</button>
 			<div class="h-full min-h-[5rem] w-full flex-grow-[1] break-words rounded bg-orange-200 p-1">
-				{#if hashResult}
-					<pre>{hashResult}</pre>
+				{#if isMining}
+					<p>currently mining...</p>
+				{/if}
+
+				{#if miningResult.nonce !== undefined}
+					<p>Nonce: {miningResult.nonce}</p>
+					<p>Hash: {miningResult.result}</p>
 				{/if}
 
 				{#if errorMessage}
-					<pre>{errorMessage}</pre>
+					<p>{errorMessage}</p>
 				{/if}
 			</div>
 		</div>
