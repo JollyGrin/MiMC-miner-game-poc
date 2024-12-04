@@ -3,7 +3,7 @@
 
 	let worker: Worker | null = null;
 
-	let threshold = 0.0001; // 0-1
+	let threshold = 0.000_1; // 0-1
 	let maxIterations = 100_000;
 	let miningResult: { nonce?: number; result?: string } = {};
 	let isMining = false;
