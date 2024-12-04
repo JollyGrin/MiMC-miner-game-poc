@@ -20,3 +20,7 @@ You setup a CLI tool on your computer.
 
 
 
+## Setup Static Github Pages
+
+1. Update adapter to static in `svelte.config.ts`
+2. update `+layout.ts`
