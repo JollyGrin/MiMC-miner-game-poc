@@ -2,8 +2,8 @@
 	import { onMount } from 'svelte';
 
 	let worker: Worker | null = null;
-	let inputValue = '';
-	let keyValue = '';
+	let inputValue = 0x2b;
+	let keyValue = 0x2b;
 	let hashResult = '';
 	let errorMessage = '';
 	let isLoading = false;
@@ -49,13 +49,18 @@
 				? { type: 'hash', input: inputValue }
 				: { type: 'hashWithKey', input: inputValue, key: keyValue };
 
+		console.table({
+			messageType,
+			messageData
+		});
+
 		worker.postMessage(messageData);
 	}
 </script>
 
 <div class="grid h-screen place-items-center p-4">
 	<div
-		class="grid h-full max-h-[20rem] w-full max-w-[50rem] bg-orange-300 p-4 font-mono text-gray-500"
+		class="grid min-h-[20rem] w-full max-w-[50rem] gap-8 bg-orange-300 p-4 font-mono text-gray-500"
 	>
 		<div class="flex flex-col">
 			<p>Network Scraper CLI</p>
@@ -78,15 +83,18 @@
 				<p>Recruits available: 0/0</p>
 			</div>
 		</div>
-		<div class="flex items-center gap-4">
+		<div class="flex flex-col items-center gap-4">
 			{#if isLoading}
 				<pre>Loading!</pre>
 			{/if}
 
-			<button on:click={handleHash} class="self-end rounded bg-orange-200 p-3">
+			<button
+				on:click={handleHash}
+				class="w-fit min-w-[12rem] self-start rounded bg-orange-200 p-3"
+			>
 				{'> Start Scraping'}
 			</button>
-			<div class="h-full flex-grow-[1] rounded bg-orange-200 p-1">
+			<div class="h-full min-h-[5rem] w-full flex-grow-[1] break-words rounded bg-orange-200 p-1">
 				{#if hashResult}
 					<pre>{hashResult}</pre>
 				{/if}
