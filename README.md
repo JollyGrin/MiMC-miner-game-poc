@@ -1,38 +1,22 @@
-# sv
+# Miner Game PoC
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+To learn more about the MiMC hashing function when used in browser, setting up a mini demo.
 
-## Creating a project
+## Game Idea
 
-If you're seeing this, you've probably already done this step. Congrats!
+You are attempting to setup a hackers network state collective to collaborate on projects. You will need to scour the web for recruits, send out invites, wait for responses (yes/no), and then send off recruits on missions to earn funds.
 
-```bash
-# create a new project in the current directory
-npx sv create
+You setup a CLI tool on your computer.
+- run a program to scour social networks to create a list of recruits to cold-call
+- send out encrypted invites and wait for responses 
+- when recruits say yes, you can task them with missions to earn funds for your state
 
-# create a new project in my-app
-npx sv create my-app
-```
 
-## Developing
+### Todo
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- [ ] implement a MiMC webworker
+- [ ] setup a nonce restriction to limit how often one can hit a successful result
+- [ ] use localstorage (with zustand?) to manage saving progress
 
-```bash
-npm run dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
