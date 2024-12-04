@@ -3,17 +3,12 @@ import { MiMC } from '$lib/mimc';
 // Create a new instance of MiMC
 const mimc = new MiMC();
 
-// Helper function to safely convert input to BigInt
-function safeConvertToBigInt(input: string | number | bigint): bigint {
-	if (typeof input === 'bigint') return input;
-
-	// Remove '0x' prefix if present
-	if (typeof input === 'string') {
-		input = input.replace(/^0x/, '');
-	}
-
-	return BigInt(input);
-}
+// function safeConvertToBigInt(input: string | number | bigint): bigint {
+// 	if (typeof input === 'bigint') return input;
+// 	// Remove '0x' prefix if present
+// if (typeof input === 'string') { input = input.replace(/^0x/, ''); }
+// 	return BigInt(input);
+// }
 
 // Listen for messages from the main thread
 self.addEventListener('message', (event) => {
