@@ -14,7 +14,7 @@ You setup a CLI tool on your computer.
 
 ### Todo
 
-- [ ] implement a MiMC webworker
+- [x] implement a MiMC webworker
 - [ ] setup a nonce restriction to limit how often one can hit a successful result
 - [ ] use localstorage (with zustand?) to manage saving progress
 

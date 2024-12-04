@@ -3,13 +3,6 @@ import { MiMC } from '$lib/mimc';
 // Create a new instance of MiMC
 const mimc = new MiMC();
 
-// function safeConvertToBigInt(input: string | number | bigint): bigint {
-// 	if (typeof input === 'bigint') return input;
-// 	// Remove '0x' prefix if present
-// if (typeof input === 'string') { input = input.replace(/^0x/, ''); }
-// 	return BigInt(input);
-// }
-
 // Listen for messages from the main thread
 self.addEventListener('message', (event) => {
 	const { threshold, maxIterations } = event.data;
@@ -25,9 +18,9 @@ self.addEventListener('message', (event) => {
 		const hashThreshold = BigInt(threshold);
 
 		const moduloRemain = hashValue % 10_000n;
-		console.log({ moduloRemain }, moduloRemain > 9_000n);
+		const thresholHit = moduloRemain < 500n;
 
-		if (hashValue < hashThreshold) {
+		if (thresholHit) {
 			console.log('HIT! FOUND');
 			self.postMessage({
 				success: true,
