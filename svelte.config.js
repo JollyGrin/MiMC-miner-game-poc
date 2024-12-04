@@ -14,6 +14,10 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter()
 	},
+	paths: {
+		// Set the base path for GitHub Pages
+		base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
+	},
 
 	extensions: ['.svelte', '.svx']
 };
