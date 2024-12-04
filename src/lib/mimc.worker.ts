@@ -37,7 +37,15 @@ self.addEventListener('message', (event) => {
 			return;
 		}
 
-		console.log('mined nonce', nonce, 'with result', result);
+		if (nonce % 1000 === 0) {
+			console.log(
+				'mined nonce',
+				nonce,
+				'with result',
+				hashValue,
+				BigInt(threshold)
+			);
+		}
 
 		nonce++;
 	}

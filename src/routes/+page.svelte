@@ -3,7 +3,7 @@
 
 	let worker: Worker | null = null;
 	let threshold = '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'; // Adjustable
-	let maxIterations = 10000000;
+	let maxIterations = 50_000;
 	let miningResult: { nonce?: number; result?: string } = {};
 	let isMining = false;
 	let errorMessage = '';
@@ -71,10 +71,10 @@
 		</div>
 		<div class="flex flex-col items-center gap-4">
 			<button
-				on:click={startMining}
-				class="w-fit min-w-[12rem] self-start rounded bg-orange-200 p-3"
+				on:click={!isMining ? startMining : null}
+				class={`w-fit min-w-[12rem] self-start rounded bg-orange-200 p-3 ${isMining && 'cursor-wait opacity-50'}`}
 			>
-				{'> Start Scraping'}
+				{isMining ? '> scrapping...' : '> Start Scraping'}
 			</button>
 			<div class="h-full min-h-[5rem] w-full flex-grow-[1] break-words rounded bg-orange-200 p-1">
 				{#if isMining}
