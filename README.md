@@ -18,6 +18,8 @@ You setup a CLI tool on your computer.
 - [ ] setup a nonce restriction to limit how often one can hit a successful result
 - [ ] use localstorage (with zustand?) to manage saving progress
 
+- [ ] add server instead of webworker (2nd page as example)
+- [ ] perlin noise: generate stuff procedurally with the hashes
 
 
 ## Setup Static Github Pages

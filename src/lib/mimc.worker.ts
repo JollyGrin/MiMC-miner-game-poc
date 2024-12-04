@@ -22,8 +22,13 @@ self.addEventListener('message', (event) => {
 
 		// Convert hex result to BigInt and compare with threshold
 		const hashValue = BigInt(result);
+		const hashThreshold = BigInt(threshold);
 
-		if (hashValue < BigInt(threshold)) {
+		const moduloRemain = hashValue % 10_000n;
+		console.log({ moduloRemain }, moduloRemain > 9_000n);
+
+		if (hashValue < hashThreshold) {
+			console.log('HIT! FOUND');
 			self.postMessage({
 				success: true,
 				nonce,
@@ -33,13 +38,7 @@ self.addEventListener('message', (event) => {
 		}
 
 		if (nonce % 1000 === 0) {
-			console.log(
-				'mined nonce',
-				nonce,
-				'with result',
-				hashValue,
-				BigInt(threshold)
-			);
+			console.log('mined nonce', nonce, 'with result', result);
 		}
 
 		nonce++;

@@ -2,7 +2,11 @@
 	import { onMount } from 'svelte';
 
 	let worker: Worker | null = null;
-	let threshold = '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'; // Adjustable
+	const difficulty = {
+		easy: BigInt(Number.MAX_SAFE_INTEGER),
+		hard: '0x00000000000000000000000000000001'
+	};
+	let threshold = difficulty.easy; // Adjustable
 	let maxIterations = 50_000;
 	let miningResult: { nonce?: number; result?: string } = {};
 	let isMining = false;
