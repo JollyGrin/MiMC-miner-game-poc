@@ -105,9 +105,9 @@
 	>
 		<div class="flex flex-col">
 			<div class="flex justify-between">
-				<p>MiMC Miner - With Long Polling</p>
+				<p>MiMC Miner - With Threads</p>
 				<a href="/">webworker</a>
-				<a href="/threads">threads</a>
+				<a href="/server">server</a>
 			</div>
 
 			<p class="text-orange-200">
@@ -116,14 +116,13 @@
 					.toString()
 					.replaceAll(',', '')}
 			</p>
-
 			<code class=" rounded bg-gray-200 p-2">
 				<span class="text-gray-300">// open seperate terminal to start server </span>
 				<br />
-				<span> pnpm run server:polling </span>
+				<span> pnpm run server:threads </span>
 			</code>
 			<p>Mine MiMC hashes until you find one below the threshold</p>
-			<p>Runs with server long-polling (open console to view mining logs)</p>
+			<p>Runs with server threads (open console to view mining logs)</p>
 		</div>
 
 		<form>

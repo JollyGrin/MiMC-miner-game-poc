@@ -1,55 +1,90 @@
 import { MiMC } from '../src/lib/mimc';
+import os from 'os';
 
 const tasks: Record<string, any> = {};
+
+interface WorkerMessage {
+	success: boolean;
+	nonce?: number;
+	result?: string;
+	iteration?: number;
+	moduloRemain?: bigint;
+	error?: string;
+}
 
 function startHashing(
 	threshold: number,
 	maxIterations: number,
-	taskId: string
-) {
-	const mimc = new MiMC();
-	const thresholdSize = 10_000_000n;
-	const percentage = BigInt(Math.floor(threshold * 1_000_000));
-	let nonce = 0;
-	let iteration = 0;
-	let result = '';
+	taskId: string,
+	maxThreads: number = os.cpus().length
+): void {
+	const chunkSize = Math.ceil(maxIterations / maxThreads);
+	const workers: Worker[] = [];
+	let completed = false;
 
 	console.log(
-		`[TASK STARTED] Task ID: ${taskId}, Threshold: ${threshold}, Max Iterations: ${maxIterations}`
+		`[TASK STARTED] Task ID: ${taskId}, Threshold: ${threshold}, Max Iterations: ${maxIterations}, Max Threads: ${maxThreads}`
 	);
 
-	while (iteration < maxIterations) {
-		result = mimc.hash(BigInt(nonce));
-		const hashValue = BigInt(result);
-		const moduloRemain = hashValue % thresholdSize;
-		const hitTarget = (thresholdSize * percentage) / 1_000_000n;
+	for (let i = 0; i < maxThreads; i++) {
+		const startNonce = i * chunkSize;
+		const worker = new Worker(
+			new URL('../src/lib/mimc.worker.ts', import.meta.url),
+			{
+				type: 'module'
+			}
+		);
 
-		if (moduloRemain < hitTarget) {
-			console.log(
-				`[TASK COMPLETED] Task ID: ${taskId}, Nonce: ${nonce}, Iteration: ${iteration}`
-			);
-			tasks[taskId] = {
-				status: 'completed',
-				success: true,
-				nonce,
-				result,
-				iteration
-			};
-			return;
-		}
+		workers.push(worker);
 
-		iteration++;
-		nonce++;
+		worker.onmessage = (event: MessageEvent<WorkerMessage>) => {
+			const message = event.data;
+
+			if (message.success && !completed) {
+				console.log(
+					`[TASK COMPLETED] Task ID: ${taskId}, Nonce: ${message.nonce}, Iteration: ${message.iteration}`
+				);
+				completed = true;
+
+				tasks[taskId] = {
+					taskId,
+					status: 'completed',
+					nonce: message.nonce?.toString(),
+					result: message.result?.toString(),
+					iteration: message.iteration,
+					moduloRemain: message.moduloRemain?.toString(),
+					success: true,
+					chunks: chunkSize,
+					maxThreads,
+					workers: workers.length
+				};
+
+				// Terminate all workers
+				workers.forEach((w) => w.terminate());
+			} else if (!message.success && i === workers.length - 1 && !completed) {
+				console.log(`[TASK FAILED] Task ID: ${taskId}, No solution found`);
+			}
+		};
+
+		worker.onerror = (err: ErrorEvent) => {
+			console.error(`[WORKER ERROR] Task ID: ${taskId}, Error: ${err.message}`);
+		};
+
+		// worker.onexit = (code: number) => {
+		// 	if (code !== 0 && !completed) {
+		// 		console.error(
+		// 			`[WORKER EXIT] Task ID: ${taskId}, Worker exited with code ${code}`
+		// 		);
+		// 	}
+		// };
+
+		// Send initial data to the worker
+		worker.postMessage({
+			threshold,
+			maxIterations: chunkSize,
+			startNonce
+		});
 	}
-
-	console.log(
-		`[TASK FAILED] Task ID: ${taskId}, No solution found within max iterations`
-	);
-	tasks[taskId] = {
-		status: 'completed',
-		success: false,
-		error: 'No solution found'
-	};
 }
 
 const corsHeaders = {
@@ -74,7 +109,10 @@ Bun.serve({
 			return req.json().then((body) => {
 				const { threshold, maxIterations } = body;
 				const taskId = Date.now().toString();
-				tasks[taskId] = { status: 'in-progress' };
+
+				if (tasks[taskId]?.status !== 'completed') {
+					tasks[taskId] = { status: 'in-progress' };
+				}
 
 				console.log(`[TASK INITIATED] Task ID: ${taskId}`);
 				// Run hashing asynchronously
