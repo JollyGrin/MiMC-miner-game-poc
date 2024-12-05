@@ -25,11 +25,11 @@ self.addEventListener('message', (event) => {
 
 		const moduloRemain = hashValue % thresholdSize;
 		const hitTarget = (thresholdSize * percentage) / 1_000_000n;
-		console.log({ hitTarget, moduloRemain });
+		console.info(`Found ${moduloRemain}: (must be below ${hitTarget})`);
 		const thresholdHit = moduloRemain < hitTarget;
 
 		if (thresholdHit) {
-			console.log(
+			console.info(
 				'HIT! FOUND',
 				hitTarget,
 				moduloRemain,
@@ -39,13 +39,10 @@ self.addEventListener('message', (event) => {
 				success: true,
 				nonce,
 				result,
-				iteration
+				iteration,
+				moduloRemain
 			});
 			return;
-		}
-
-		if (iteration % 1000 === 0) {
-			console.log('mined nonce', iteration, 'with result', result);
 		}
 
 		iteration++;
