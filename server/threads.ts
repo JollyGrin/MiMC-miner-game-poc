@@ -50,7 +50,11 @@ function startHashing(
 					taskId,
 					status: 'completed',
 					nonce: message.nonce?.toString(),
-					iteration: message.iteration
+					result: message.result?.toString(),
+					iteration: message.iteration,
+					moduloRemain: message.moduloRemain?.toString(),
+					success: true,
+					chunks: chunkSize
 				};
 
 				// Terminate all workers

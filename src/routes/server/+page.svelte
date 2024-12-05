@@ -6,7 +6,13 @@
 	let thresholdMagnitude = 3; // Initial value corresponding to 0.001
 	let threshold = 0.001; // Initial threshold
 	let maxIterations = 100_000;
-	let miningResult: { nonce?: number; result?: string; moduloRemain?: bigint } = {};
+	let miningResult: {
+		nonce?: number;
+		result?: string;
+		moduloRemain?: bigint;
+		iteration?: number;
+		chunks?: number;
+	} = {};
 	let isMining = false;
 	let errorMessage = '';
 	let taskId: string | null = null;
@@ -72,7 +78,8 @@
 						miningResult = {
 							nonce: status.nonce,
 							result: status.result,
-							moduloRemain: status.moduloRemain
+							moduloRemain: status.moduloRemain,
+							iteration: status.iteration
 						};
 						errorMessage = '';
 					} else {
@@ -143,6 +150,7 @@
 					<p>Nonce: {miningResult.nonce}</p>
 					<p class="break-all">Hash: {miningResult.result}</p>
 					<p>Found: {miningResult.moduloRemain}</p>
+					<p>Iteration: {miningResult?.iteration}</p>
 				{/if}
 
 				{#if errorMessage}

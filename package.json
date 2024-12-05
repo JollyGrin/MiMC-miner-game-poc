@@ -9,7 +9,9 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"server:polling": "bun run ./server/index.ts",
+		"server:threads": "bun run ./server/threads.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.3",
