@@ -54,7 +54,9 @@ function startHashing(
 					iteration: message.iteration,
 					moduloRemain: message.moduloRemain?.toString(),
 					success: true,
-					chunks: chunkSize
+					chunks: chunkSize,
+					maxThreads,
+					workers: workers.length
 				};
 
 				// Terminate all workers
