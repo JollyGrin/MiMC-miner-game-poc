@@ -2,29 +2,21 @@
 
 To learn more about the MiMC hashing function when used in browser, setting up a mini demo.
 
-## Game Idea
+`/` landing page with webworker
 
-You are attempting to setup a hackers network state collective to collaborate on projects. You will need to scour the web for recruits, send out invites, wait for responses (yes/no), and then send off recruits on missions to earn funds.
+`/server` landing page with longpolling a server
+- need to run `bun run ./server/index.ts` to use longpolling
 
-You setup a CLI tool on your computer.
-- run a program to scour social networks to create a list of recruits to cold-call
-- send out encrypted invites and wait for responses 
-- when recruits say yes, you can task them with missions to earn funds for your state
 
 
 ### Todo
 
 - [x] implement a MiMC webworker
 - [x] setup a nonce restriction to limit how often one can hit a successful result
-- [ ] use localstorage (with zustand?) to manage saving progress
-
-- [ ] make max_iterations and threshold a slider
-- [ ] when hitting success, use the hash to generate someone's details (fake person) (perlin?)
-    - [ ] setup a "successful" filter like "frontend dev", which maps to successful result and unsuccessful results map to unrelated roles
-
-- [ ] add server instead of webworker (2nd page as example)
+- [x] threshold a slider
+- [x] add server instead of webworker (2nd page as example)
 - [ ] perlin noise: generate stuff procedurally with the hashes
-
+- [ ] use localstorage (with zustand?) to manage saving progress
 
 ## Setup Static Github Pages
 
