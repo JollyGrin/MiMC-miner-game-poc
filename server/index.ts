@@ -52,10 +52,21 @@ function startHashing(
 	};
 }
 
+const corsHeaders = {
+	'Access-Control-Allow-Origin': '*', // Allow all origins (use specific origin in production)
+	'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+	'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+};
+
 //@ts-expect-error: type issue
 Bun.serve({
 	port: 3001,
 	fetch(req) {
+		// Handle preflight requests
+		if (req.method === 'OPTIONS') {
+			return new Response(null, { headers: corsHeaders });
+		}
+
 		const url = new URL(req.url);
 
 		if (url.pathname === '/start-task' && req.method === 'POST') {
@@ -69,7 +80,13 @@ Bun.serve({
 				// Run hashing asynchronously
 				setTimeout(() => startHashing(threshold, maxIterations, taskId), 0);
 
-				return new Response(JSON.stringify({ taskId }), { status: 202 });
+				return new Response(JSON.stringify({ taskId }), {
+					headers: {
+						...corsHeaders,
+						'Content-Type': 'application/json'
+					},
+					status: 202
+				});
 			});
 		}
 
@@ -80,17 +97,31 @@ Bun.serve({
 			if (!task) {
 				console.log(`[TASK NOT FOUND] Task ID: ${taskId}`);
 				return new Response(JSON.stringify({ error: 'Task not found' }), {
+					headers: {
+						...corsHeaders,
+						'Content-Type': 'application/json'
+					},
 					status: 404
 				});
 			}
 			console.log(`[TASK STATUS] Task ID: ${taskId} - Status: ${task.status}`);
-			return new Response(JSON.stringify(task), { status: 200 });
+			return new Response(JSON.stringify(task), {
+				headers: {
+					...corsHeaders,
+					'Content-Type': 'application/json'
+				},
+				status: 200
+			});
 		}
 
 		console.log(
 			`[UNKNOWN REQUEST] Path: ${url.pathname}, Method: ${req.method}`
 		);
 		return new Response(JSON.stringify({ error: 'Not Found' }), {
+			headers: {
+				...corsHeaders,
+				'Content-Type': 'application/json'
+			},
 			status: 404
 		});
 	}

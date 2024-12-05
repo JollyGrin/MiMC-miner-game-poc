@@ -59,7 +59,10 @@
 		class="grid min-h-[20rem] w-full max-w-[50rem] gap-8 bg-orange-300 p-4 font-mono text-gray-500"
 	>
 		<div class="flex flex-col">
-			<p>MiMC Miner - With WebWorker</p>
+			<div class="flex justify-between">
+				<p>MiMC Miner - With WebWorker</p>
+				<a href="/server">longpolling</a>
+			</div>
 			<p class="text-orange-200">
 				{Array.from({ length: 40 })
 					.map(() => '/')
