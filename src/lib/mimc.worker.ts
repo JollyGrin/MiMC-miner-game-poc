@@ -13,7 +13,7 @@ self.addEventListener('message', (event) => {
 	const { threshold, maxIterations } = event.data;
 
 	const percentage = BigInt(Math.floor(threshold * 1_000_000));
-	let nonce = Date.now();
+	let nonce = event.data.nonce ?? 0;
 	let iteration = 0;
 	let result = '';
 
@@ -46,7 +46,7 @@ self.addEventListener('message', (event) => {
 		}
 
 		iteration++;
-		nonce = Date.now();
+		nonce++;
 	}
 
 	// If no solution found
